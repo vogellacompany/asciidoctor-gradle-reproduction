@@ -1,0 +1,9 @@
+[[resources_gradle]]
+== Gradle
+	
+http://mrhaki.blogspot.de/search/label/Gradle%3AGoodness[Gradle Goodness blog series]
+
+https://www.vogella.com/tutorials/EclipseGradle/article.html[Eclipse Gradle tooling]
+
+https://docs.gradle.org/current/userguide/publishing_maven.html[Publish to Maven repositories]
+

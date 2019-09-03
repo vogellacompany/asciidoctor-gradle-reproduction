@@ -1,0 +1,9 @@
+apply plugin: 'groovy'
+
+repositories {
+  mavenCentral()
+}
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:2.4.5'
+    testImplementation 'junit:junit:4.12'
+} 

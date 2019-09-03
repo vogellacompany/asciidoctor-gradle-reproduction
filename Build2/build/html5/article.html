@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<meta name="keywords" content="Gradle, Groovy">
+<meta name="author" content="Version 2.3, 07.06.2018">
+<title>The Gradle build system- Tutorial</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>The Gradle build system- Tutorial</h1>
+<div class="details">
+<span id="author" class="author">Version 2.3, 07.06.2018</span><br>
+<span id="revnumber">version ,</span>
+<span id="revdate">Simon Scholz (c) 2014 - 2018 vogella GmbH</span>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+This tutorial describes how to the Gradle build tool.
+</blockquote>
+</div>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle"></div>
+<ul class="sectlevel1">
+<li><a href="#introduction-to-the-gradle-build-system">1. Introduction to the Gradle build system</a>
+<ul class="sectlevel2">
+<li><a href="#what-is-the-gradle-build-system">1.1. What is the Gradle build system?</a></li>
+<li><a href="#gradle_projectstasks">1.2. Projects and tasks in Gradle</a></li>
+<li><a href="#gradle_runbuild_buildfile">1.3. The Gradle build file - build.gradle</a></li>
+<li><a href="#gradle_runbuild_buildfile_comments">1.4. Comments in Gradle build files</a></li>
+<li><a href="#project-settings-and-description">1.5. Project settings and description</a></li>
+</ul>
+</li>
+<li><a href="#gradle-plug-ins">2. Gradle plug-ins</a>
+<ul class="sectlevel2">
+<li><a href="#ide-support-for-gradle">2.1. IDE support for Gradle</a></li>
+</ul>
+</li>
+<li><a href="#installing-and-configuring-gradle">3. Installing and configuring Gradle</a>
+<ul class="sectlevel2">
+<li><a href="#requirements">3.1. Requirements</a></li>
+<li><a href="#download-and-extract-gradle">3.2. Download and extract Gradle</a></li>
+<li><a href="#installing-gradle-on-windows">3.3. Installing Gradle on Windows</a></li>
+<li><a href="#installing-gradle-on-linux-mac">3.4. Installing Gradle on Linux/Mac</a></li>
+<li><a href="#gradeinstallation_demon">3.5. Using the Gradle daemon for improved startup time</a></li>
+<li><a href="#specify-custom-jvm-settings-for-gradle">3.6. Specify custom JVM settings for Gradle</a></li>
+<li><a href="#typical-gitignore-file-for-gradle-projects">3.7. Typical .gitignore file for Gradle projects</a></li>
+</ul>
+</li>
+<li><a href="#exercise-configure-gradle-properties">4. Exercise: Configure Gradle properties</a></li>
+<li><a href="#dependency-management-for-java-projects">5. Dependency management for Java projects</a>
+<ul class="sectlevel2">
+<li><a href="#managing-dependencies-with-gradle">5.1. Managing dependencies with Gradle</a></li>
+<li><a href="#specifying-the-repositories-to-search-for-dependencies">5.2. Specifying the repositories to search for dependencies</a></li>
+<li><a href="#show-dependencies-of-a-project-also-transient-dependencies">5.3. Show dependencies of a project (also transient dependencies) .</a></li>
+<li><a href="#gradle-cache-and-deleting-the-cache">5.4. Gradle cache and deleting the cache</a></li>
+<li><a href="#excluding_dependencies">5.5. Excluding transitive dependencies</a></li>
+<li><a href="#forcing-a-specific-version-of-a-transitive-dependency">5.6. Forcing a specific version of a transitive dependency</a></li>
+</ul>
+</li>
+<li><a href="#running-a-build">6. Running a build</a></li>
+<li><a href="#gradle_tasks">7. Gradle Tasks</a>
+<ul class="sectlevel2">
+<li><a href="#default-gradle-tasks">7.1. Default Gradle tasks</a></li>
+<li><a href="#creating_gradle_tasks">7.2. Creating custom Gradle tasks</a></li>
+<li><a href="#gradle_task_structure">7.3. Task structure</a></li>
+<li><a href="#gradle_task_dependencies">7.4. Task dependencies</a></li>
+<li><a href="#skip_gradle_tasks">7.5. Skipping Tasks</a></li>
+</ul>
+</li>
+<li><a href="#exercise-gradle-tasks">8. Exercise: Gradle Tasks</a>
+<ul class="sectlevel2">
+<li><a href="#using-the-tasks-gradle-task">8.1. Using the tasks Gradle task</a></li>
+<li><a href="#using-the-help-task">8.2. Using the help task</a></li>
+<li><a href="#create-a-groovy-project">8.3. Create a Groovy project</a></li>
+<li><a href="#optional-import-the-new-groovy-project">8.4. Optional - Import the new groovy project</a></li>
+<li><a href="#using-the-dependencies-task">8.5. Using the dependencies task</a></li>
+</ul>
+</li>
+<li><a href="#gradewrapper">9. Using the Gradle wrapper</a>
+<ul class="sectlevel2">
+<li><a href="#configure-gradle_opts-for-the-gradle-wrapper">9.1. Configure GRADLE_OPTS for the Gradle wrapper</a></li>
+</ul>
+</li>
+<li><a href="#exercise-configuring-the-wrapper-task">10. Exercise: Configuring the Wrapper Task</a></li>
+<li><a href="#exercise-create-custom-gradle-tasks">11. Exercise - Create Custom Gradle Tasks</a>
+<ul class="sectlevel2">
+<li><a href="#exercise-hello-gradle-task">11.1. Exercise - Hello Gradle Task</a></li>
+<li><a href="#exercise-dependencies-between-tasks">11.2. Exercise - Dependencies between tasks</a></li>
+<li><a href="#exercise-dofirst-action-for-the-tasks">11.3. Exercise - doFirst action for the tasks</a></li>
+</ul>
+</li>
+<li><a href="#exercise-creating-a-copy-task">12. Exercise: Creating a Copy Task</a></li>
+<li><a href="#exercise-specifying-a-custom-task-in-another-gradle-file">13. Exercise: Specifying a custom Task in another gradle file</a></li>
+<li><a href="#exercise-trigger-gradle-build-from-java-code">14. Exercise: Trigger Gradle build from Java code</a>
+<ul class="sectlevel2">
+<li><a href="#create-new-gradle-projects">14.1. Create new gradle projects</a></li>
+<li><a href="#add-dependencies">14.2. Add dependencies</a></li>
+<li><a href="#build-targetproject">14.3. Build TargetProject</a></li>
+</ul>
+</li>
+<li><a href="#building-java-projects">15. Building Java projects</a>
+<ul class="sectlevel2">
+<li><a href="#the-java-plug-in">15.1. The Java plug-in</a></li>
+<li><a href="#default-project-layout-of-java-projects">15.2. Default project layout of Java projects</a></li>
+<li><a href="#java-project-creation-with-the-init-task">15.3. Java project creation with the init task</a></li>
+<li><a href="#specifying-the-java-version-in-your-build-file">15.4. Specifying the Java version in your build file</a></li>
+</ul>
+</li>
+<li><a href="#gradle_buildgroovy">16. Building Groovy projects</a>
+<ul class="sectlevel2">
+<li><a href="#gradle_buildgroovy_plugin">16.1. The Groovy plug-in</a></li>
+<li><a href="#gradle_buildgroovy_projectlayout">16.2. Default project layout of Groovy projects</a></li>
+</ul>
+</li>
+<li><a href="#gradle_testing">17. Testing with Gradle</a>
+<ul class="sectlevel2">
+<li><a href="#gradle_junit_namingconventions">17.1. Test naming conventions for Gradle</a></li>
+<li><a href="#include-and-exclude-particular-tests">17.2. Include and Exclude particular Tests</a></li>
+<li><a href="#show-all-test-output-in-the-terminal">17.3. Show all test output in the terminal</a></li>
+</ul>
+</li>
+<li><a href="#gradle_multiproject_build">18. Building multiple projects with Gradle</a>
+<ul class="sectlevel2">
+<li><a href="#gradle_multiproject_build_structure">18.1. Creating a multi project build structure</a></li>
+<li><a href="#specifying-a-general-build-configuration">18.2. Specifying a general build configuration</a></li>
+<li><a href="#project-specific-configurations-and-dependencies">18.3. Project specific configurations and dependencies</a></li>
+</ul>
+</li>
+<li><a href="#gradle_deployment">19. Deployment with Gradle</a>
+<ul class="sectlevel2">
+<li><a href="#gradle_deployment_overview">19.1. How to deploy with Gradle</a></li>
+<li><a href="#gradle_deployment_maven">19.2. Using the maven-publish plugin</a></li>
+</ul>
+</li>
+<li><a href="#integration-with-ant">20. Integration with Ant</a></li>
+<li><a href="#gradle_convert_maven">21. Convert Maven Projects to Gradle</a></li>
+<li><a href="#developing-custom-gradle-plug-ins">22. Developing custom Gradle plug-ins</a>
+<ul class="sectlevel2">
+<li><a href="#why-creating-gradle-plug-ins">22.1. Why creating Gradle plug-ins</a></li>
+<li><a href="#gradle-dsl">22.2. Gradle DSL</a></li>
+</ul>
+</li>
+<li><a href="#exercise-creating-a-simple-gradle-plugin">23. Exercise - Creating a simple Gradle plugin</a>
+<ul class="sectlevel2">
+<li><a href="#create-a-gradle-project">23.1. Create a Gradle project</a></li>
+<li><a href="#apply-the-java-gradle-plugin-plug-in">23.2. Apply the 'java-gradle-plugin' plug-in</a></li>
+</ul>
+</li>
+<li><a href="#exercise-deploy-your-custom-gradle-plug-in-to-your-local-maven-repository">24. Exercise - Deploy your custom Gradle plug-in to your local Maven repository</a></li>
+<li><a href="#exercise-using-the-new-plug-in">25. Exercise - Using the new plug-in</a></li>
+<li><a href="#optional-exercise-publishing-the-plug-in-to-the-gradle-plug-in-portal">26. Optional Exercise - Publishing the plug-in to the Gradle plug-in portal</a></li>
+<li><a href="#debugging-gradle-plug-ins">27. Debugging Gradle Plug-ins</a>
+<ul class="sectlevel2">
+<li><a href="#activate-remote-debugging">27.1. Activate remote debugging</a></li>
+<li><a href="#remote-debugging-in-the-eclipse-ide">27.2. Remote debugging in the Eclipse IDE</a></li>
+</ul>
+</li>
+<li><a href="#gradle_code_analysis">28. Using code analysis tools</a></li>
+<li><a href="#resources_gradle">29. Gradle</a></li>
+<li><a href="#copyright-license-and-source-code">Appendix A: Copyright, License and Source code</a></li>
+</ul>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction-to-the-gradle-build-system"><a class="link" href="#introduction-to-the-gradle-build-system">1. Introduction to the Gradle build system</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="what-is-the-gradle-build-system"><a class="link" href="#what-is-the-gradle-build-system">1.1. What is the Gradle build system?</a></h3>
+<div class="imageblock">
+<div class="content">
+<img src="./img/gradle-logo.png" alt="Gradle logo">
+</div>
+</div>
+<div class="paragraph">
+<p>
+<em>Gradle</em> is an advanced general purpose build management system based on Groovy and Kotlin.
+Gradle supports the automatic download and configuration of dependencies or other libraries.
+It supports Maven and Ivy repositories for retrieving these dependencies.
+This allows reusing the artifacts of existing build systems.</p>
+</div>
+<div class="paragraph">
+<p>Gradle supports multi-project and multi-artifact builds.</p>
+</div>
+<div class="paragraph">
+<p>Gradle has the notion of <em>projects</em> and <em>tasks</em>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle_projectstasks"><a class="link" href="#gradle_projectstasks">1.2. Projects and tasks in Gradle</a></h3>
+<div class="paragraph">
+<p>A Gradle build consists of one or more <em>projects</em>.
+Projects can be something which should be built or something that should be done.
+Each project consists of <em>tasks</em>.
+A task represents a piece of work which a build performs, e.g., compile the source code or generate the Javadoc.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle_runbuild_buildfile"><a class="link" href="#gradle_runbuild_buildfile">1.3. The Gradle build file - build.gradle</a></h3>
+<div class="paragraph">
+<p>A project using Gradle describes its build via a <em>build.gradle</em> file.
+This file is located in the root folder of the project.
+The build file for Gradle builds is based on a <em>Domain Specific Language</em> (DSL).
+In this file you can use a combination of declarative and imperative statements.
+You can also write Groovy or Kotlin code, whenever you need it.
+Tasks can also be created and extended dynamically at runtime.</p>
+</div>
+<div class="paragraph">
+<p>This build file defines a project and its tasks.
+Gradle is a general purpose build system hence this build file can perform any task.
+The following listing represents a very simple build file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">task hello {
+    doLast {
+        println 'Hello Gradle'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In older Gradle files you might encounter the use of <code>&lt;&lt;</code> instead of <code>doLast</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">task hello &lt;&lt; {
+    println <span class="string"><span class="delimiter">'</span><span class="content">Hello Gradle</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This option is removed in Gradle v5.0.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To execute the <code>hello</code> task in this build file, type <code>gradle hello</code> on the command line in the directory of the build file.
+If the Gradle output should be suppressed, use the <code>-q</code> (quiet) parameter.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="console">gradle hello
+
+# alternative add the -q flag
+gradle -q hello</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle_runbuild_buildfile_comments"><a class="link" href="#gradle_runbuild_buildfile_comments">1.4. Comments in Gradle build files</a></h3>
+<div class="paragraph">
+<p>You can use single and multiline comments in Gradle build files.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">// Single line comment
+
+/*
+ Multi
+ line
+ comment
+*/</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="project-settings-and-description"><a class="link" href="#project-settings-and-description">1.5. Project settings and description</a></h3>
+<div class="paragraph">
+<p>By default, Gradle uses the directory name as project name.
+You can change this by creating a <em>settings.gradle</em> file in the directory which specifies the project name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="console">rootProject.name ='com.vogella.gradle.first'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also add a description to your project via the <em>build.gradle</em> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">description =&quot;&quot;&quot;
+Example project for a Gradle build
+
+Project name: ${project.name}
+
+More detailed information here... &quot;&quot;&quot;
+
+task hello {
+    doLast {
+        println 'Hello Gradle'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use the <code>gradle project</code> command to get information about your project.
+The following listing shows the output.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="console">:projects
+
+------------------------------------------------------------
+Root project -
+Example project for a Gradle build
+
+Project name: com.vogella.gradle.first
+
+More detailed information here...
+------------------------------------------------------------
+
+Root project 'com.vogella.gradle.first' -
+Example project for a Gradle build
+
+Project name: com.vogella.gradle.first
+
+More detailed information here...
+No sub-projects
+
+To see a list of the tasks of a project, run gradle &lt;project-path&gt;:tasks
+For example, try running gradle :tasks
+
+BUILD SUCCESSFUL
+
+Total time: 1.048 secs</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-plug-ins"><a class="link" href="#gradle-plug-ins">2. Gradle plug-ins</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>
+The Gradle build system uses plug-ins to extend its core functionality.
+A plug-in is an extension to Gradle which typically adds some preconfigured tasks.
+Gradle ships with a number of plug-ins, and you can develop custom plug-ins.</p>
+</div>
+<div class="paragraph">
+<p>One example is the Java plug-in.
+This plug-in adds tasks to your project which allow compiling Java source code, run unit tests and to create a JAR file.</p>
+</div>
+<div class="paragraph">
+<p>A plug-in is included in a <em>build.gradle</em> file with the <code>apply plugin: 'pluginname'</code> statement.</p>
+</div>
+<div class="paragraph">
+<p>For example the entry <code>apply plugin: 'com.android.application'</code> makes the Android plug-in available for a Gradle build.</p>
+</div>
+<div class="paragraph">
+<p>Gradle provides also a registry for plug-ins via <a href="http://plugins.gradle.org">Gradle Plugin search</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="ide-support-for-gradle"><a class="link" href="#ide-support-for-gradle">2.1. IDE support for Gradle</a></h3>
+<div class="paragraph">
+<p>The Gradleware company is developing Eclipse Gradle tooling via the Eclipse Buildship project.
+Other IDEs like IntelliJ and Android Studio already include also good Gradle support.
+See <a href="https://www.vogella.com/tutorials/EclipseGradle/article.html">Eclipse Gradle tutorial</a> for the usage of Gradle with Eclipse.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installing-and-configuring-gradle"><a class="link" href="#installing-and-configuring-gradle">3. Installing and configuring Gradle</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="requirements"><a class="link" href="#requirements">3.1. Requirements</a></h3>
+<div class="paragraph">
+<p>
+The usage of Gradle requires an JDK (Java Development Kit) installation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="download-and-extract-gradle"><a class="link" href="#download-and-extract-gradle">3.2. Download and extract Gradle</a></h3>
+<div class="paragraph">
+<p>The latest version of Gradle can be found on the <a href="http://gradle.org/gradle-download">Gradle Download page</a>.
+Download the latest <em>Complete distribution</em>.</p>
+</div>
+<div class="paragraph">
+<p>It is a gradle-${version}-all.zip, where ${version} is a placeholder for the current version.</p>
+</div>
+<div class="paragraph">
+<p>Extract the contents of the downloaded zip file a new folder.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="installing-gradle-on-windows"><a class="link" href="#installing-gradle-on-windows">3.3. Installing Gradle on Windows</a></h3>
+<div class="paragraph">
+<p>Add the folder to which you extracted Gradle to your <code>PATH</code> environment variable.</p>
+</div>
+<div class="paragraph">
+<p>By pressing Win + Pause the system settings can be opened.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/system_settings.png" alt="Windows System Settings">
+</div>
+</div>
+<div class="paragraph">
+<p>First the <em>Advanced System Settings</em> have to be selected and then the <b class="button">Environment Variables</b> button needs to be pressed.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/user_and_system_variables.png" alt="Windows User and System Variables">
+</div>
+</div>
+<div class="paragraph">
+<p>In the <em>Environment Variables</em> dialog the (1) GRADLE_HOME and JAVA_HOME user variables should be set.
+After that the (2) Path entry in the <em>system variables</em> is selected, the <b class="button">modify</b> button can be pressed to add the <em>bin</em> folder of the Gradle installation to the Path.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/path_variables.png" alt="Windows Path Variables">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="installing-gradle-on-linux-mac"><a class="link" href="#installing-gradle-on-linux-mac">3.4. Installing Gradle on Linux/Mac</a></h3>
+<div class="sect3">
+<h4 id="manual-installation"><a class="link" href="#manual-installation">3.4.1. Manual installation</a></h4>
+<div class="paragraph">
+<p>The <code>JAVA_HOME</code> variable must point to a proper jdk and <code>$JAVA_HOME/bin</code> must be part of the PATH environment variable.</p>
+</div>
+<div class="paragraph">
+<p>Add Gradle to the path by running <code>export PATH=/usr/local/gradle/FOLDER_TO_WHICH_YOU_EXTRACTED_GRADLE/bin:$PATH</code> in a terminal.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="installation-with-sdkman"><a class="link" href="#installation-with-sdkman">3.4.2. Installation with SDKMAN!</a></h4>
+<div class="paragraph">
+<p>SDKMAN! is a command-line tool that allows you to install multiple Gradle versions and switch between them.
+It runs on any UNIX based operating system.</p>
+</div>
+<div class="sect4">
+<h5 id="installing-sdkman"><a class="link" href="#installing-sdkman">Installing SDKMAN!</a></h5>
+<div class="paragraph">
+<p>You install it from the command-line. If you have already installed SDKMAN! you can skip this step.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="commandline">curl -s &quot;https://get.sdkman.io&quot; | bash</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After you&#8217;ve installed SDKMAN! you have to restart you terminal before using it.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="installing-gradle-and-setting-default-version"><a class="link" href="#installing-gradle-and-setting-default-version">Installing Gradle and setting default version</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="commandline">sdk install gradle 3.2
+sdk default gradle 3.2
+gradle -v</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="switching-gradle-version"><a class="link" href="#switching-gradle-version">Switching Gradle version</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="commandline">sdk install gradle 2.13
+# use 2.13 for current terminal session
+sdk use gradle 2.13
+gradle -v</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="check-if-gradle-installation-was-successful"><a class="link" href="#check-if-gradle-installation-was-successful">3.4.3. Check if Gradle installation was successful</a></h4>
+<div class="paragraph">
+<p>Open a command line and type <code>gradle</code>, which will run Gradle&#8217;s help task by default.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradeinstallation_demon"><a class="link" href="#gradeinstallation_demon">3.5. Using the Gradle daemon for improved startup time</a></h3>
+<div class="paragraph">
+<p>Gradle allows to start Gradle as daemon to avoid starting the Java virtual machine for every build.
+To configure that create a file called <em>gradle.properties</em> in the <em>${HOME}/.gradle</em> and add the following line to it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>org.gradle.daemon=true</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also place the <em>gradle.properties</em> file to the root directory of your project and commit it to your version control system.</p>
+</div>
+<div class="paragraph">
+<p>If Gradle is not used for a few hours, the daemon stops automatically.</p>
+</div>
+<div class="paragraph">
+<p>Executing gradle with the <code>--daemon</code> parameter on the command line starts the gradle daemon.</p>
+</div>
+<div class="paragraph">
+<p>To stop the daemon interactively use the <code>gradle --stop</code> command.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="specify-custom-jvm-settings-for-gradle"><a class="link" href="#specify-custom-jvm-settings-for-gradle">3.6. Specify custom JVM settings for Gradle</a></h3>
+<div class="paragraph">
+<p>The GRADLE_OPTS environment variable offers the opportunity to set specific JVM options for Gradle.</p>
+</div>
+<div class="paragraph">
+<p>In <a href="#gradeinstallation_demon">Using the Gradle daemon for improved startup time</a> the performance for the JVM startup is improved, but another performance killer for large builds can be a too small maximum heap space.
+Therefore it makes sense to increase it for Gradle.</p>
+</div>
+<div class="paragraph">
+<p><code>export GRADLE_OPTS=-Xmx1024m</code>
+defines that Gradle can use 1 GB as maximum heap size.</p>
+</div>
+<div class="paragraph">
+<p>On Windows OS environment variables are usually defined via the system property UI.</p>
+</div>
+<div class="paragraph">
+<p>If you want to set JVM settings not globally but on a per project basis you can place them in <code>&lt;Your app folder&gt;/gradle.properties</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>org.gradle.jvmargs=-Xms2g -Xmx4g -XX\:MaxHeapSize\=3g</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="typical-gitignore-file-for-gradle-projects"><a class="link" href="#typical-gitignore-file-for-gradle-projects">3.7. Typical .gitignore file for Gradle projects</a></h3>
+<div class="paragraph">
+<p>If you are using Git as version control system, you can use the following <em>.gitignore</em> file as template for a Gradle project.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="error">#</span> Android built artifacts
+*.apk
+*.ap_
+*.dex
+
+<span class="error">#</span> Java build artifacts <span class="type">class</span> <span class="class">files</span>
+*.class
+
+<span class="error">#</span> other generated files
+bin/
+gen/
+build/
+
+<span class="error">#</span> local configuration file (<span class="keyword">for</span> Android sdk path, etc)
+local.properties
+
+<span class="error">#</span> OSX files
+.DS_Store
+
+<span class="error">#</span> Eclipse project files
+.classpath
+.project
+
+<span class="error">#</span> Android Studio
+*.iml
+.idea
+.gradle
+
+
+<span class="error">#</span>NDK
+obj/</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-configure-gradle-properties"><a class="link" href="#exercise-configure-gradle-properties">4. Exercise: Configure Gradle properties</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using the <em>gradle</em> command the first time a <em>.gradle</em> folder is created in the ${USER_HOME} directory.</p>
+</div>
+<div class="paragraph">
+<p>On Linux this is usually /home/${yourUserName}/.gradle</p>
+</div>
+<div class="paragraph">
+<p>On Windows this is usually C:\Users\${yourUserName}\.gradle</p>
+</div>
+<div class="paragraph">
+<p>On Mac this is usually /Users/${yourUserName}/.gradle</p>
+</div>
+<div class="paragraph">
+<p>Inside this <em>.gradle</em> folder a <em>gradle.properties</em> file with the following contents has to be created.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">org.gradle.warning.mode=all</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now the default of the <em>org.gradle.warning.mode</em> property will be overridden. (Default is summary)</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Common or secret properties can be set or overridden here, e.g., Gradle defaults or access tokens for deployment.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependency-management-for-java-projects"><a class="link" href="#dependency-management-for-java-projects">5. Dependency management for Java projects</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="managing-dependencies-with-gradle"><a class="link" href="#managing-dependencies-with-gradle">5.1. Managing dependencies with Gradle</a></h3>
+<div class="paragraph">
+<p>
+
+
+Gradle allows managing the classpath of your projects.
+It can add JAR files, directories or other projects to the build path of your application.
+It also supports the automatic download of your Java library dependencies.
+Simply specify the dependency in your Gradle build file.
+This triggers Gradle to download the library including its transient dependencies during the build.</p>
+</div>
+<div class="paragraph">
+<p>A Java library is identified by Gradle via its project’s <code>groupId:artifactId:version</code> (also known as GAV in Maven).
+This GAV uniquely identifies a library in a certain version.
+You can use the <a href="http://search.maven.org/">Search Maven Website</a> to search for the GAV of a library in Maven Central.</p>
+</div>
+<div class="paragraph">
+<p>To add a dependency add an entry to the dependency section in your build.gradle file as demonstrated by the following listing.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    testCompile 'junit:junit:4.12'
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="specifying-the-repositories-to-search-for-dependencies"><a class="link" href="#specifying-the-repositories-to-search-for-dependencies">5.2. Specifying the repositories to search for dependencies</a></h3>
+<div class="paragraph">
+<p>In your build file you specify the remote repositories to look for dependencies.
+Gradle supports Maven and Ivy repositories to search for dependencies.
+The following listing shows how to configure Maven central as dependency source.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">repositories {
+    mavenCentral()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is also possible to configure the target as a URL.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">repositories {
+    maven {
+        url &quot;http://repo.mycompany.com/maven2&quot;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also specify other targets, for example Bintray as Maven repository.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">repositories {
+    maven (&quot;http://jcenter.bintray.com/&quot;)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The next listing demonstrates how to define an Ivy dependency.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">repositories {
+    ivy {
+        url &quot;http://repo.mycompany.com/repo&quot;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also add different repositories at once.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">repositories {
+    maven (&quot;https://repository-achartengine.forge.cloudbees.com/snapshot/&quot;)
+    jcenter {
+        url &quot;http://jcenter.bintray.com/&quot;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also reference artifacts from the file system.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+    runtime files('libs/library1.jar', 'libs/library2.jar')
+    runtime fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(dir: &quot;${System.properties['user.home']}/libs/cargo&quot;, include: '*.jar')
+}
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="show-dependencies-of-a-project-also-transient-dependencies"><a class="link" href="#show-dependencies-of-a-project-also-transient-dependencies">5.3. Show dependencies of a project (also transient dependencies) .</a></h3>
+<div class="paragraph">
+<p>The following command shows all transient dependencies of a Gradle project.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">gradle dependencies</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><a href="https://mvnrepository.com" class="bare">https://mvnrepository.com</a> allows also to search for an artifact and shows its direct dependencies.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle-cache-and-deleting-the-cache"><a class="link" href="#gradle-cache-and-deleting-the-cache">5.4. Gradle cache and deleting the cache</a></h3>
+<div class="paragraph">
+<p>You can refresh dependencies in your cache with the command line option <code>--refresh-dependencies</code>.
+You can also delete the cached files under <em>~/.gradle/caches</em>.
+With the next build Gradle attempts to download the dependencies again.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="excluding_dependencies"><a class="link" href="#excluding_dependencies">5.5. Excluding transitive dependencies</a></h3>
+<div class="paragraph">
+<p>Sometimes you have dependencies on packages that define conflicting transitive dependencies.
+One solution is to exclude a dependency from a specific module:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">compile <span class="string"><span class="delimiter">'</span><span class="content">org.springframework:spring-web:4.3.10.RELEASE</span><span class="delimiter">'</span></span> {
+    exclude <span class="key">group</span>: <span class="string"><span class="delimiter">'</span><span class="content">com.google.code.gson</span><span class="delimiter">'</span></span>, <span class="key">module</span>: <span class="string"><span class="delimiter">'</span><span class="content">gson</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you have multiple dependency that define a dependency you want to exclude, you can do so at the project level:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">configurations.all {
+    exclude <span class="key">group</span>: <span class="string"><span class="delimiter">'</span><span class="content">com.google.code.gson</span><span class="delimiter">'</span></span>, <span class="key">module</span>: <span class="string"><span class="delimiter">'</span><span class="content">gson</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Following the same approach we can exclude a dependency only during runtime:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">configurations.runtime {
+    exclude <span class="key">group</span>: <span class="string"><span class="delimiter">'</span><span class="content">com.google.code.gson</span><span class="delimiter">'</span></span>, <span class="key">module</span>: <span class="string"><span class="delimiter">'</span><span class="content">gson</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="forcing-a-specific-version-of-a-transitive-dependency"><a class="link" href="#forcing-a-specific-version-of-a-transitive-dependency">5.6. Forcing a specific version of a transitive dependency</a></h3>
+<div class="paragraph">
+<p>It is possible to force gradle to pick a specific version when it encounters conflicting transitive dependencies.
+Keep in mind that you might have to manually update this version when you are upgrading the packages that depend on it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">configurations.all {
+    resolutionStrategy.force <span class="string"><span class="delimiter">'</span><span class="content">com.google.code.gson:gson:2.8.1</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="running-a-build"><a class="link" href="#running-a-build">6. Running a build</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>
+When starting a Gradle build via the command line, the <code>gradle</code> command tool looks for a file called <code>build.gradle</code> in the current directory.</p>
+</div>
+<div class="paragraph">
+<p>Gradle also supports abbreviation of tasks, e.g,. to start the task <code>lars</code> using the <code>gradle l</code> command is sufficient.
+The abbreviation must uniquely identify a task, otherwise Gradle gives you an error message, which tell that the abbreviation is ambiguous.
+CamelCase can also be used for an abbreviation, e.g., the task <code>gradle vogellaCompany</code> can also be called with the <code>gradle vC</code> command.</p>
+</div>
+<div class="paragraph">
+<p>A Gradle build can be triggered via the <code>gradle</code> or <code>gradle -q</code> command.
+The <code>-q</code> or <code>--quiet</code> parameter makes the execution of Gradle less verbose.
+A specific task can be addressed like this: <code>gradle -q other</code>, which runs the "other" task.
+You can of course also use the Gradle wrapper script, if that is avaiable.</p>
+</div>
+<div class="paragraph">
+<p>To define a different build file the <code>-b buildFileName</code> option can be used.</p>
+</div>
+<div class="paragraph">
+<p>In scenarios where no network connection is available the <code>--offline</code> parameter can be used.
+This runs the Gradle build offline, which means that Gradle does not try to reach resources from the network during a build.
+E.g., for dependencies from an artifact repository like Maven Central or Bintray.</p>
+</div>
+<div class="paragraph">
+<p>To get a detailed output of what Gradle is doing you can specify the <code>--info</code> parameter.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle_tasks"><a class="link" href="#gradle_tasks">7. Gradle Tasks</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="default-gradle-tasks"><a class="link" href="#default-gradle-tasks">7.1. Default Gradle tasks</a></h3>
+<div class="paragraph">
+<p>Gradle also offers tasks for introspection of Gradle itself, so a Gradle project can be analyzed by using Gradle&#8217;s default tasks.</p>
+</div>
+<div class="paragraph">
+<p>A good example is the <code>tasks</code> task, which shows the available tasks of a project.
+When typing <code>gradle -q tasks</code>, a list of tasks is shown.
+This command lists the base tasks even without an <code>build.gradle</code> file.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/gradle_tasks_task.png" alt="gradle tasks task">
+</div>
+</div>
+<div class="paragraph">
+<p>Gradle also tries to give some guidance for the usage of invoked tasks, as shown in the bottom of the console output.
+The <code>gradle tasks --all</code> command would also list dependent tasks, which are invoked before the actual task.</p>
+</div>
+<div class="paragraph">
+<p>When running <code>gradle tasks --all</code> the output looks quite similar to the one before, except of the <code>init</code> task, which depends on the <code>wrapper</code> task.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="creating_gradle_tasks"><a class="link" href="#creating_gradle_tasks">7.2. Creating custom Gradle tasks</a></h3>
+<div class="paragraph">
+<p>In the <a href="#gradle_runbuild_buildfile">The Gradle build file - build.gradle</a> section the first minimalist task in a <code>build.gradle</code> file has been created.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">task hello {
+    doLast {
+        println 'Hello Gradle'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When running the <code>gradle -q tasks</code> task with this <code>build.gradle</code> file, the <code>hello</code> task will be listed under "Other tasks".</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/gradle_starter_hello_task_command_line.png" alt="gradle starter hello task command line">
+</div>
+</div>
+<div class="paragraph">
+<p>Tasks without a group are considered as private tasks.
+For instance, the <em>Gradle Task View</em> of the Eclipse Gradle Plug-in does not show such tasks.
+But they can be shown by activating the right entry in the view&#8217;s menu.</p>
+</div>
+<div class="paragraph">
+<p>Groups can be applied with the <code>group</code> property and a description can be applied by using the <code>description</code> property.
+In case the group already exists the <code>hello</code> task is added to it. If the group does not exist, it is created.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">task hello {
+     group 'vogella'
+     description 'The hello task greets Gradle by saying &quot;Hello Gradle&quot;'
+
+     doFirst {
+        println 'Hello Gradle'
+     }
+     doLast {
+        println 'Bye bye Gradle'
+     }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle_task_structure"><a class="link" href="#gradle_task_structure">7.3. Task structure</a></h3>
+<div class="paragraph">
+<p>Gradle has different phases, when working with tasks.
+First of all there is a configuration phase, where the code, which is specified directly in a task&#8217;s closure, is executed.
+The configuration block is executed for every available task and not only for those tasks, which are later actually executed.</p>
+</div>
+<div class="paragraph">
+<p>After the configuration phase, the execution phase then runs the code inside the <code>doFirst</code> or <code>doLast</code> closures of those tasks, which are actually executed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">task onlySpecifiesCodeForConfigurationPhase {
+    group 'vogella'
+    description 'Configuration phase task example.'
+
+    println 'I always get printed even though, I am not invoked'
+}
+
+task anotherUnrelatedTask {
+    doLast {
+        println 'I am in the doLast execution phase'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When running <code>gradle -q anotherUnrelatedTask</code> the following is printed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="console">I always get printed even though, I am not invoked
+I am in the doLast execution phase</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first statement comes from the configuration phase in which the task definition of the <code>onlySpecifiesCodeForConfigurationPhase</code> is evaluated.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle_task_dependencies"><a class="link" href="#gradle_task_dependencies">7.4. Task dependencies</a></h3>
+<div class="paragraph">
+<p>Gradle allows the definition of default tasks in the build file.
+These are executed, if no other tasks are specified.
+Tasks can also define their dependencies.
+Both settings are demonstrated in the following build file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">defaultTasks 'clean', 'compile'
+
+task clean {
+    doLast {
+        println 'Executing the clean task'
+    }
+}
+
+task compile {
+    doLast {
+        println 'Executing the compile task'
+    }
+}
+
+task other(dependsOn: 'compile') {
+    doLast {
+        println &quot;I'm not a default task!&quot;
+    }
+}
+
+task cleanOther {
+    doLast {
+        println &quot;I want to clean up before running!&quot;
+    }
+}
+
+cleanOther.dependsOn clean, compile</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Hooking into predefined task executions for default tasks or tasks from plug-ins can also be done by using the <code>dependsOn</code> method.</p>
+</div>
+<div class="paragraph">
+<p>For instance when certain things have to be done right after the compilation of java code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'java'
+
+task invokedAfterCompileJava(dependsOn: 'compileJava')  {
+    doLast {
+        println 'This will be invoked right after the compileJava task is done'
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An alternative to creating a new task, which depends on the
+<code>'compileJava'</code>
+task, a new execution block can also be directly applied to an
+existing
+task, e.g., the
+<code>'compileJava'</code>
+task.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'java'
+
+compileJava.doFirst { println 'Another action applied to the &quot;compileJava&quot; task' }
+compileJava.doLast { println 'Another doLast action is also applied' }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When running the javaCompile task all actions, which have been
+applied to the javaCompile task, are run one by
+one according to the
+order they have been applied to the task.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="skip_gradle_tasks"><a class="link" href="#skip_gradle_tasks">7.5. Skipping Tasks</a></h3>
+<div class="paragraph">
+<p>Skipping tasks can be done by passing a predicate closure to the <code>onlyIf</code> method of a task or by throwing a <code>StopExecutionException</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">task eclipse {
+    doLast {
+        println 'Hello Eclipse'
+    }
+}
+
+// #1st approach - closure returning true, if the task should be executed, false if not.
+eclipse.onlyIf {
+    project.hasProperty('usingEclipse')
+}
+
+// #2nd approach - alternatively throw an StopExecutionException() like this
+eclipse.doFirst {
+    if(!usingEclipse) {
+        throw new StopExecutionException()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Tasks depending on the eclipse task will be run even, if a  <code>StopExecutionException</code> is thrown.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="accessing-system-variables-like-the-user-home-directory"><a class="link" href="#accessing-system-variables-like-the-user-home-directory">7.5.1. Accessing system variables like the user home directory</a></h4>
+<div class="paragraph">
+<p>You can access system variables.
+For example, to get the user home directory use the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">def homePath = System.properties['user.home']</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-gradle-tasks"><a class="link" href="#exercise-gradle-tasks">8. Exercise: Gradle Tasks</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="using-the-tasks-gradle-task"><a class="link" href="#using-the-tasks-gradle-task">8.1. Using the tasks Gradle task</a></h3>
+<div class="paragraph">
+<p>The target of this exercise is to get an overview about the default tasks, which are delivered by default.</p>
+</div>
+<div class="paragraph">
+<p>Open a command line and execute the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">gradle -q tasks</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-the-help-task"><a class="link" href="#using-the-help-task">8.2. Using the help task</a></h3>
+<div class="paragraph">
+<p>The target of this exercise is to make use of the <code>help</code> task to get more information about other tasks, e.g., the init task.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">gradle -q help --task init</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-a-groovy-project"><a class="link" href="#create-a-groovy-project">8.3. Create a Groovy project</a></h3>
+<div class="paragraph">
+<p>The previous exercise informed about the usage of the init task.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">gradle -q init --type groovy-library</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="optional-import-the-new-groovy-project"><a class="link" href="#optional-import-the-new-groovy-project">8.4. Optional - Import the new groovy project</a></h3>
+<div class="paragraph">
+<p>Eclipse Buildship can be used to import the project into the Eclipse IDE.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-the-dependencies-task"><a class="link" href="#using-the-dependencies-task">8.5. Using the dependencies task</a></h3>
+<div class="paragraph">
+<p>In order to see the project&#8217;s dependencies (including the transitive ones) the <em>dependencies</em> task has to be invoked.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">./gradlew dependencies</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the optional Buildship import exercise has been done the <code>dependencies</code> task can also be invoked using the <em>Gradle Tasks</em> view.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradewrapper"><a class="link" href="#gradewrapper">9. Using the Gradle wrapper</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <em>Gradle wrapper</em> allows that a user can run the build with a predefined version and settings of Gradle without a local Gradle installation.
+This wrapper is a batch script on Windows, and a shell script for other operating systems.
+When you start a Gradle build via the wrapper, the specified version of Gradle is automatically downloaded and used to run the build.</p>
+</div>
+<div class="paragraph">
+<p>The wrapper is the preferred way of starting a Gradle build, as it make the execution of the build independent of the installed Gradle version.
+The wrapper script can be created via <code>gradle wrapper</code>.</p>
+</div>
+<div class="paragraph">
+<p>As a result you find a <em>gradlew</em> for *nix based systems and <em>gradlew.bat</em> for window systems.
+These files can be used instead for the <code>gradle</code> command, and if Gradle is not installed on the machine, Gradle is automatically downloaded and installed.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to define a task which defines the version of the wrapper.
+If this task is executed, it creates the wrapper and downloads the correct version of Gradle.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">wrapper {
+    gradleVersion = '4.9'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The version of the Gradle Wrapper can also be defined, when creating it via the command line.</p>
+</div>
+<div class="paragraph">
+<p><code>gradle wrapper --gradle-version 4.9</code></p>
+</div>
+<div class="paragraph">
+<p>Without this explicit version parameter Gradle will automatically pick the latest version.</p>
+</div>
+<div class="sect2">
+<h3 id="configure-gradle_opts-for-the-gradle-wrapper"><a class="link" href="#configure-gradle_opts-for-the-gradle-wrapper">9.1. Configure GRADLE_OPTS for the Gradle wrapper</a></h3>
+<div class="paragraph">
+<p>GRADLE_OPTS can also be defined inside the <em>gradlew</em> or <em>gradlew.bat</em> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">#!/usr/bin/env bash
+
+##############################################################################
+##
+##  Gradle start up script for UN*X
+##
+##############################################################################
+
+# Add default JVM options here.
+# You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+DEFAULT_JVM_OPTS=&quot;-Xmx1024m&quot;
+
+#... {more lines}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">@if &quot;%DEBUG%&quot; == &quot;&quot; @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+
+@rem Set local scope for the variables with windows NT shell
+if &quot;%OS%&quot;==&quot;Windows_NT&quot; setlocal
+
+@rem Add default JVM options here. You can also use JAVA_OPTS
+# and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS=-Xmx1024m
+
+@rem ... {more lines}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-configuring-the-wrapper-task"><a class="link" href="#exercise-configuring-the-wrapper-task">10. Exercise: Configuring the Wrapper Task</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Tasks like Gradle&#8217;s Wrapper Task are available by default and certain properties of it, e.g., <em>gradleVersion</em> can be configured like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">wrapper {
+    gradleVersion = '4.9'
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-create-custom-gradle-tasks"><a class="link" href="#exercise-create-custom-gradle-tasks">11. Exercise - Create Custom Gradle Tasks</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="exercise-hello-gradle-task"><a class="link" href="#exercise-hello-gradle-task">11.1. Exercise - Hello Gradle Task</a></h3>
+<div class="paragraph">
+<p>Create a <em>helloGradle</em> task, which prints <em>Hello Gradle</em> with the group <em>workshop</em> and a proper description.</p>
+</div>
+<div class="paragraph">
+<p>Then use the <code>./gradlew tasks</code> command to see your new <em>helloGradle</em> task in the console or use Buildship in the Eclipse IDE.</p>
+</div>
+<div class="paragraph">
+<p>Then invoke the <em>helloGradle</em> task by calling <code>./gradlew hG</code> or again use Buildship in the Eclipse IDE.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="exercise-dependencies-between-tasks"><a class="link" href="#exercise-dependencies-between-tasks">11.2. Exercise - Dependencies between tasks</a></h3>
+<div class="paragraph">
+<p>Create two new tasks called <code>learnGroovy</code>, which prints <em>Learn Groovy</em>,  and <code>learnGradle</code>, which prints 'Learn Gradle'.</p>
+</div>
+<div class="paragraph">
+<p>These tasks should have reasonable dependencies.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="exercise-dofirst-action-for-the-tasks"><a class="link" href="#exercise-dofirst-action-for-the-tasks">11.3. Exercise - doFirst action for the tasks</a></h3>
+<div class="paragraph">
+<p>Extend the <code>learnGroovy</code> task so that it prints <em>Install Eclipse IDE with Buildship</em> before it prints Learn Groovy.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-creating-a-copy-task"><a class="link" href="#exercise-creating-a-copy-task">12. Exercise: Creating a Copy Task</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>New tasks can also be created and derived from another task and specify certain properties.</p>
+</div>
+<div class="paragraph">
+<p>The <code>Copy</code> task type can be used to specify such a task, which is able to copy files.</p>
+</div>
+<div class="paragraph">
+<p>Create a new project with the following <em>build.gradle</em> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">task copyFile(type: Copy) {
+    from 'source'
+    into 'destination'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a <em>source</em> folder inside this project and add a text file to this folder.</p>
+</div>
+<div class="paragraph">
+<p>When running the <code>copyFile</code> task it copies the text file to a new <em>destination</em> folder.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-specifying-a-custom-task-in-another-gradle-file"><a class="link" href="#exercise-specifying-a-custom-task-in-another-gradle-file">13. Exercise: Specifying a custom Task in another gradle file</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a new Gradle project, which contains the following structure.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/buildSrc_Tasks.png" alt="buildSrc Tasks">
+</div>
+</div>
+<div class="paragraph">
+<p>The <em>CheckWebsite.groovy</em> class looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">package com.example
+
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
+
+import java.io.IOException;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+class CheckWebsite extends DefaultTask {
+
+    String url = 'http://www.vogella.com'
+
+    @TaskAction
+    void checkWebsite() {
+        // check the given website by using the url
+    try {
+        Document doc = Jsoup.connect(url).get();
+        String title = doc.title();
+        println title
+        println url
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since this class has external dependencies to jsoup, a <em>build.gradle</em> file for this class has to be created.</p>
+</div>
+<div class="paragraph">
+<p>So the <em>build.gradle</em> inside the <em>buildSrc</em> folder, which is responsible for building the <code>CheckWebsite</code> class, looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">plugins {
+    id 'groovy'
+}
+
+repositories {
+   jcenter()
+}
+
+dependencies {
+    compile 'org.jsoup:jsoup:1.8.3'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally the main <em>build.gradle</em> file in the root folder makes use of the new <code>com.example.CheckWebsite</code> task type.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">task defaultWebsiteCheck(type: com.example.CheckWebsite)
+
+task checkGradleWebsite(type: com.example.CheckWebsite) {
+    url = 'https://docs.gradle.org/'
+}
+
+wrapper {
+    gradleVersion = '4.9'
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-trigger-gradle-build-from-java-code"><a class="link" href="#exercise-trigger-gradle-build-from-java-code">14. Exercise: Trigger Gradle build from Java code</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This exercise describes how to trigger a gradle build from Java code.</p>
+</div>
+<div class="sect2">
+<h3 id="create-new-gradle-projects"><a class="link" href="#create-new-gradle-projects">14.1. Create new gradle projects</a></h3>
+<div class="paragraph">
+<p>Create two new gradle projects with the names <em>BaseProject</em> (this project starts the gradle build) and <em>TargetProject</em> (this project is built by the BaseProject).
+Make sure the BaseProject applies the <em>java</em> plugin.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="add-dependencies"><a class="link" href="#add-dependencies">14.2. Add dependencies</a></h3>
+<div class="paragraph">
+<p>Add the following dependency to the BaseProject.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>compile 'org.gradle:gradle-tooling-api:4.0-rc-2'</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="build-targetproject"><a class="link" href="#build-targetproject">14.3. Build TargetProject</a></h3>
+<div class="paragraph">
+<p>Create a class named <em>Application</em> with a static main method like the following.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>import java.io.File;
+
+import org.gradle.tooling.BuildLauncher;
+import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ProjectConnection;
+
+public class Application {
+
+    public static void main(String[] args) {
+        ProjectConnection connection = GradleConnector.newConnector().forProjectDirectory(new File("path/to/targetproject")).connect();
+        try {
+            BuildLauncher build = connection.newBuild();
+            build.forTasks("build");
+            build.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This method first creates a <em>ProjectConnection</em> to the project that should be build and connects to it.
+Make sure to replace <em>path/to/targetproject</em> with the path of the TargetProject.
+From the project connection, a new <em>BuildLauncher</em> can be obtained.
+With the help of the method <em>forTasks()</em> you can specify the gradle tasks that should be executed.
+The BuildLauncher also provides some other methods to configure the build.
+You can, for example, set gradle build arguments or change the Java version to build the project with.
+By calling the <em>run()</em> method the build is finally executed.
+Make sure to close the connection in the finally block.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="building-java-projects"><a class="link" href="#building-java-projects">15. Building Java projects</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="the-java-plug-in"><a class="link" href="#the-java-plug-in">15.1. The Java plug-in</a></h3>
+<div class="paragraph">
+<p>The Java plug-in provides tasks to compile Java source code, run unit tests, create Javadoc and create a JAR file.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="default-project-layout-of-java-projects"><a class="link" href="#default-project-layout-of-java-projects">15.2. Default project layout of Java projects</a></h3>
+<div class="paragraph">
+<p>This plug-ins assume a certain setup of your Java project (similar to Maven).</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>src/main/java contains the Java source code</p>
+</li>
+<li>
+<p>src/test/java contains the Java tests</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you follow this setup, the following build file is sufficient to compile, test and bundle a Java project.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'java'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To start the build, type <code>gradle build</code> on the command line.</p>
+</div>
+<div class="paragraph">
+<p><code>SourceSets</code> can be used to specify a different project structure, e.g., the sources are stored in a <em>src</em> folder rather than in <em>src/main/java</em>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'java'
+
+sourceSets {
+    main {
+         java {
+              srcDir 'src'
+              }
+         }
+    test {
+         java {
+              srcDir 'test'
+              }
+         }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="java-project-creation-with-the-init-task"><a class="link" href="#java-project-creation-with-the-init-task">15.3. Java project creation with the init task</a></h3>
+<div class="paragraph">
+<p>Gradle does not yet support multiple project templates (called archetypes) like Maven.
+But it offers an <code>init</code> task to create the structure of a new Gradle project.
+Without additional parameters, this task creates a Gradle project, which contains the gradle wrapper files, a <em>build.gradle</em> and <em>settings.gradle</em> file.</p>
+</div>
+<div class="paragraph">
+<p>When adding the <code>--type</code> parameter with <code>'java-library'</code> as value, a java project structure is created and the <em>build.gradle</em> file contains a certain Java template with JUnit.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/gradle_init_java_library.png" alt="gradle init java library">
+</div>
+</div>
+<div class="paragraph">
+<p>The <em>build.gradle</em> file will look similar to this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">/*
+ * ... deleted the generated text for brevity
+ */
+
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    // The production code uses the SLF4J logging API at compile time
+    compile 'org.slf4j:slf4j-api:1.7.12'
+
+    // Declare the dependency for your favourite test framework you want to use
+    // TestNG is also supported by the Gradle Test task. Just change the
+    // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
+    // 'test.useTestNG()' to your build script.
+    testCompile 'junit:junit:4.12'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A project hosted at Github <a href="https://github.com/townsfolk/gradle-templates">Gradle-templates project</a> provides more templates beyond the init task.
+The Gradle team is also working on this archetype/template topic.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="specifying-the-java-version-in-your-build-file"><a class="link" href="#specifying-the-java-version-in-your-build-file">15.4. Specifying the Java version in your build file</a></h3>
+<div class="paragraph">
+<p>Usually a Java project has a version and a target JRE on which it is compiled.
+The <code>version</code> and <code>sourceCompatibility</code> property can be set in the <em>build.gradle</em> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">version = 0.1.0
+sourceCompatibility = 1.8</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the <code>version</code> property is set, the name of the resulting artifact will be changed accordingly, e.g., <em>{my-lib-name}-0.1.0.jar</em>.</p>
+</div>
+<div class="paragraph">
+<p>If the artifact is an executable java application the <em>MANIFEST.MF</em> file must be aware of the class with the main method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'java'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.example.main.Application'
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle_buildgroovy"><a class="link" href="#gradle_buildgroovy">16. Building Groovy projects</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="gradle_buildgroovy_plugin"><a class="link" href="#gradle_buildgroovy_plugin">16.1. The Groovy plug-in</a></h3>
+<div class="paragraph">
+<p>The Groovy plug-in for Gradle extends the Java plug-in and
+provides tasks for Groovy programs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'groovy'
+
+repositories {
+  mavenCentral()
+}
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:2.4.5'
+    testImplementation 'junit:junit:4.12'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To start the build, type <code>gradle build</code> on the command line.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle_buildgroovy_projectlayout"><a class="link" href="#gradle_buildgroovy_projectlayout">16.2. Default project layout of Groovy projects</a></h3>
+<div class="paragraph">
+<p>This plug-ins assume a certain setup of your Groovy project.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>src/main/groovy contains the Groovy source code</p>
+</li>
+<li>
+<p>src/test/groovy contains the Groovy tests</p>
+</li>
+<li>
+<p>src/main/java contains the Java source code</p>
+</li>
+<li>
+<p>src/test/java contains the Java tests</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you follow this setup, the following build file is sufficient to compile, test and bundle a Groovy project.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle_testing"><a class="link" href="#gradle_testing">17. Testing with Gradle</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="gradle_junit_namingconventions"><a class="link" href="#gradle_junit_namingconventions">17.1. Test naming conventions for Gradle</a></h3>
+<div class="paragraph">
+<p>If you are using the Gradle build system, the Gradle "test" task scans all compiled classes in the source folder of the project, e.g., <em>/src/test/java</em> or <em>/src/test/groovy</em>.
+JUnit classes are identified by:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Class or a super class extends TestCase or GroovyTestCase</p>
+</li>
+<li>
+<p>Class or a super class is annotated with @RunWith</p>
+</li>
+<li>
+<p>Class or a super class contain a method annotated with @Test</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can set the <code>scanForTestClasses</code>
+property to false, if you do not want automatic test class detection.
+In this case, if no additional include /
+exclude
+patterns are
+specified, the default for included classes are <strong>/<strong>Tests.class”,
+“</strong>/*Test.class” and the
+default excluded
+classes are
+“</strong>*/Abstract*.class”.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="include-and-exclude-particular-tests"><a class="link" href="#include-and-exclude-particular-tests">17.2. Include and Exclude particular Tests</a></h3>
+<div class="paragraph">
+<p>The test configuration in general is described at <a href="https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html">Gradle Test tasks description</a>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>Test</code> class has a <code>include</code> and <code>exclude</code> method.
+These methods can be used to specify, which tests should actually be run.</p>
+</div>
+<div class="paragraph">
+<p>Only run included tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">test {
+    include '**my.package.name/*'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Skip excluded tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">test {
+    exclude '**my.package.name/*'
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="show-all-test-output-in-the-terminal"><a class="link" href="#show-all-test-output-in-the-terminal">17.3. Show all test output in the terminal</a></h3>
+<div class="paragraph">
+<p>By default Gradle doesn&#8217;t print the standard output of your tests to the terminal.
+To see all output of your tests add this to your build file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">test {
+    testLogging.showStandardStreams = <span class="predefined-constant">true</span>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle_multiproject_build"><a class="link" href="#gradle_multiproject_build">18. Building multiple projects with Gradle</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="gradle_multiproject_build_structure"><a class="link" href="#gradle_multiproject_build_structure">18.1. Creating a multi project build structure</a></h3>
+<div class="paragraph">
+<p>A business application usually does not consist of only one single project/module, but has many projects, which should be build.</p>
+</div>
+<div class="paragraph">
+<p>Gradle has the concept of a root project, which can have many sub projects.
+The root project is specified by a <em>build.gradle</em> file, like the single projects before.
+To specify, which projects belong to the build a <em>settings.gradle</em> file is used.</p>
+</div>
+<div class="paragraph">
+<p>For instance there might be this project structure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>root_project</p>
+<div class="ulist">
+<ul>
+<li>
+<p>core</p>
+</li>
+<li>
+<p>ui</p>
+</li>
+<li>
+<p>util</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>settings.gradle</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Having this project structure the <em>settings.gradle</em> file would look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">include 'core', 'ui', 'util'
+
+# altenative way would be
+#include 'core'
+#include 'ui'
+#include 'util'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Besides the <code>tasks</code> task Gradle also provides a <code>projects</code> help task, which can be run in the <em>root_project</em> folder.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">&gt; gradle projects</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/projects_task.png" alt="projects task">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="specifying-a-general-build-configuration"><a class="link" href="#specifying-a-general-build-configuration">18.2. Specifying a general build configuration</a></h3>
+<div class="paragraph">
+<p>In a <em>build.gradle</em> file in the root_project general configurations can be applied to all projects or just to the sub projects.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">allprojects {
+    group = 'com.example.gradle'
+    version = '0.1.0'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This specifies a common <code>com.example.gradle</code> group and the <code>0.1.0</code> version to all projects.</p>
+</div>
+<div class="paragraph">
+<p>The <code>subprojects</code> closure applies common configurations for all sub projects, but not to the root project, like the <code>allprojects</code> closure does.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="project-specific-configurations-and-dependencies"><a class="link" href="#project-specific-configurations-and-dependencies">18.3. Project specific configurations and dependencies</a></h3>
+<div class="paragraph">
+<p>The <code>core</code>, <code>ui</code> and <code>util</code> sub projects can also have their own <em>build.gradle</em> file.
+If they have specific needs, which are not already applied by the general configuration of the root project.</p>
+</div>
+<div class="paragraph">
+<p>For instance the ui project usually has a dependency to the core project.
+So the ui project needs its own build.gradle file to specify this dependency.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">dependencies {
+    compile project(':core')
+    compile 'log4j:log4j:1.2.17'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Project dependencies are specified with the project method.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>':'</code> before the core project reference is Gradle specific and acts pretty much like a slash (<code>'/'</code>), when referencing a folder structure.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Alternatively you can also define the dependencies of a project in the root build.gradle file.
+But it is considered good practice to define the dependencies in the project specific build.gradle files, hence the following approach is only included for demonstration purpose.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">allprojects {
+ apply plugin: 'java'
+
+ repositories {
+  mavenCentral()
+ }
+
+}
+
+project(':com.example.core').dependencies {
+    compile project(':com.example.model')
+    compile 'log4j:log4j:1.2.17'
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle_deployment"><a class="link" href="#gradle_deployment">19. Deployment with Gradle</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="gradle_deployment_overview"><a class="link" href="#gradle_deployment_overview">19.1. How to deploy with Gradle</a></h3>
+<div class="paragraph">
+<p>Gradle offers several ways to deploy build artifacts to artifact repositories, like <a href="https://www.jfrog.com/open-source">Artifactory</a> or <a href="http://www.sonatype.org/nexus">Sonatype Nexus</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle_deployment_maven"><a class="link" href="#gradle_deployment_maven">19.2. Using the maven-publish plugin</a></h3>
+<div class="paragraph">
+<p>The most common way is to use the <code>maven-publish</code> plugin, which is provides by Gradle by default.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">// other plug-ins
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url &quot;$buildDir/repo&quot;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are several publish options, when the <code>java</code> and the <code>maven-publish</code> plugin is applied.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/maven-publish-tasks.png" alt="maven publish tasks">
+</div>
+</div>
+<div class="paragraph">
+<p>The deployment to a remote repository can be done like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+
+group 'workshop'
+version = '1.0.0'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) { from components.java }
+    }
+
+    repositories {
+        maven {
+            // default credentials for a nexus repository manager
+            credentials {
+                username 'admin'
+                password 'admin123'
+            }
+            // url to the releases maven repository
+            url &quot;http://localhost:8081/nexus/content/repositories/releases/&quot;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>More information about the deployment to a Maven artifact repository can be found here: <a href="https://docs.gradle.org/current/userguide/publishing_maven.html">Publish to Maven repository with Gradle</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="integration-with-ant"><a class="link" href="#integration-with-ant">20. Integration with Ant</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Gradle supports running Ant tasks via the Groovy AntBuilder.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle_convert_maven"><a class="link" href="#gradle_convert_maven">21. Convert Maven Projects to Gradle</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Gradle provides an incubating init task, which helps with the creation of new Gradle projects.
+This task can also convert Apache Maven <em>pom.xml</em> files to Gradle build files, if all used Maven plug-ins are known to this task.</p>
+</div>
+<div class="paragraph">
+<p>In this section the following <em>pom.xml</em> maven configuration will be converted to a Gradle project.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;project</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
+    <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0</span>
+<span class="content">http://maven.apache.org/xsd/maven-4.0.0.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;modelVersion&gt;</span>4.0.0<span class="tag">&lt;/modelVersion&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>com.example.app<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>example-app<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;packaging&gt;</span>jar<span class="tag">&lt;/packaging&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;dependencies&gt;</span>
+        <span class="tag">&lt;dependency&gt;</span>
+            <span class="tag">&lt;groupId&gt;</span>junit<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>junit<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>4.11<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span>
+    <span class="tag">&lt;/dependencies&gt;</span>
+<span class="tag">&lt;/project&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Running the <code>gradle init --type pom</code> command on the command line results in the following Gradle configuration.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/gradle_init_pom.png" alt="gradle init pom">
+</div>
+</div>
+<div class="paragraph">
+<p>The init task depends on the wrapper task so that also a Gradle wrapper is created.</p>
+</div>
+<div class="paragraph">
+<p>The resulting <em>build.gradle</em> file looks similar to this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.example.app'
+version = '1.0.0-SNAPSHOT'
+
+description = &quot;&quot;&quot;&quot;&quot;&quot;
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+
+repositories {
+     maven { url &quot;http://repo.maven.apache.org/maven2&quot; }
+}
+
+dependencies {
+    testImplementation group: 'junit', name: 'junit', version:'4.11'
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="developing-custom-gradle-plug-ins"><a class="link" href="#developing-custom-gradle-plug-ins">22. Developing custom Gradle plug-ins</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="why-creating-gradle-plug-ins"><a class="link" href="#why-creating-gradle-plug-ins">22.1. Why creating Gradle plug-ins</a></h3>
+<div class="paragraph">
+<p>As a general rule, it is useful to have a build that is as much declarative as possible as this simplifies future maintenance.
+Therefore it is advised to avoid complex code in your Gradle build file.
+If you need custom logic you should place it into a custom Gradle plug-in.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle-dsl"><a class="link" href="#gradle-dsl">22.2. Gradle DSL</a></h3>
+<div class="paragraph">
+<p>Each Gradle plug-in comes with a DSL.
+To see all properties of a Gradle object, you can use the following code snippet:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="code">println variants.properties
+            .sort{it.key}
+            .collect{it}
+            .findAll{!filtered.contains(it.key)}
+            .join('\n')</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For example to define a tasks which show the properties of all <code>android.applicationVariants</code> (in an Android project), use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="code">task showAndoidVariantsInformation {
+    doLast {
+        android.applicationVariants.all { variants -&gt;
+            println variants.properties
+            .sort{it.key}
+            .collect{it}
+            .findAll{!filtered.contains(it.key)}
+            .join('\n')
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-creating-a-simple-gradle-plugin"><a class="link" href="#exercise-creating-a-simple-gradle-plugin">23. Exercise - Creating a simple Gradle plugin</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The 'java-gradle-plugin' Gradle plug-in simplifies creating custom Gradle plug-ins.
+This plug-in is current incubating.</p>
+</div>
+<div class="paragraph">
+<p>It does the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the gradleApi() dependency is automatically added</p>
+</li>
+<li>
+<p>the gradleTestKit() dependency is automatically added</p>
+</li>
+<li>
+<p>the necessary plug-in descriptor files automatically</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="create-a-gradle-project"><a class="link" href="#create-a-gradle-project">23.1. Create a Gradle project</a></h3>
+<div class="paragraph">
+<p>Select <span class="menuseq"><b class="menu">File</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">New|Other|Gradle|Gradle Project</b></span> in Eclipse to create a new Gradle project.
+The <em>com.vogella.gradleplugin</em> as project name.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/gradle-plugin-new-wizard.png" alt="gradle plugin new wizard">
+</div>
+</div>
+<div class="paragraph">
+<p>Stick to the defaults of the wizard and create the project.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="apply-the-java-gradle-plugin-plug-in"><a class="link" href="#apply-the-java-gradle-plugin-plug-in">23.2. Apply the 'java-gradle-plugin' plug-in</a></h3>
+<div class="paragraph">
+<p>Change the <code>build.gradle</code> file to the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">java-gradle-plugin</span><span class="delimiter">'</span></span>
+}
+
+gradlePlugin {
+    plugins {
+        vogellaPlugin {
+            id = <span class="string"><span class="delimiter">'</span><span class="content">com.vogella.gradleplugin</span><span class="delimiter">'</span></span>
+            implementationClass = <span class="string"><span class="delimiter">'</span><span class="content">com.vogella.gradleplugin.MyPlugin</span><span class="delimiter">'</span></span>
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    <span class="comment">// No need to add gradleApi() here, because it is applied by the 'java-gradle-plugin' plug-in</span>
+
+    <span class="comment">// We want to merge and parse SpotBugs xml files with XSLT</span>
+    compile(<span class="string"><span class="delimiter">'</span><span class="content">net.sf.saxon:Saxon-HE:9.8.0-12</span><span class="delimiter">'</span></span>)
+    <span class="comment">// Use JUnit test framework</span>
+    testImplementation <span class="string"><span class="delimiter">'</span><span class="content">junit:junit:4.12</span><span class="delimiter">'</span></span>
+}
+
+wrapper {
+    gradleVersion = <span class="string"><span class="delimiter">'</span><span class="content">4.9</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the <em>/src/main/java</em> folder create the following two classes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.vogella.gradleplugin</span>;
+
+<span class="keyword">import</span> <span class="include">org.gradle.api.DefaultTask</span>;
+<span class="keyword">import</span> <span class="include">org.gradle.api.tasks.TaskAction</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MyTask</span> <span class="directive">extends</span> DefaultTask {
+
+    <span class="annotation">@TaskAction</span>
+    <span class="directive">public</span> <span class="type">void</span> myTask() {
+        <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello from vogella task</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.vogella.gradleplugin</span>;
+
+<span class="keyword">import</span> <span class="include">org.gradle.api.Plugin</span>;
+<span class="keyword">import</span> <span class="include">org.gradle.api.Project</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MyPlugin</span> <span class="directive">implements</span> Plugin&lt;Project&gt; {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">void</span> apply(Project project) {
+        project.getTasks().create(<span class="string"><span class="delimiter">&quot;</span><span class="content">myTask</span><span class="delimiter">&quot;</span></span>, MyTask.class);
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run the <em>build</em> task to build to plug-in and see next exercises on how to deploy and consume the plug-in.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-deploy-your-custom-gradle-plug-in-to-your-local-maven-repository"><a class="link" href="#exercise-deploy-your-custom-gradle-plug-in-to-your-local-maven-repository">24. Exercise - Deploy your custom Gradle plug-in to your local Maven repository</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Add the <em>maven-publish</em> Gradle plug-in and the <em>publishing</em> closure to the build.gradle file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">java-gradle-plugin</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">maven-publish</span><span class="delimiter">'</span></span>
+}
+
+group = <span class="string"><span class="delimiter">'</span><span class="content">com.vogella</span><span class="delimiter">'</span></span>
+version = <span class="string"><span class="delimiter">'</span><span class="content">0.0.1-SNAPSHOT</span><span class="delimiter">'</span></span>
+sourceCompatibility = <span class="float">1.8</span>
+
+<span class="comment">// ... more code</span>
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now additional publishing tasks are available and the <em>publishToMavenLocal</em> task can be used to add the Gradle plug-in to the local Maven repository.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="console">./gradlew pTML</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-using-the-new-plug-in"><a class="link" href="#exercise-using-the-new-plug-in">25. Exercise - Using the new plug-in</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To use the new Gradle plug-in a dependency to it has to be defined.
+If you pushed your plug-in to your local Maven repository, Gradle should find it and make it available.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath <span class="string"><span class="delimiter">'</span><span class="content">com.vogella:com.vogella.gradleplugin:0.0.1-SNAPSHOT</span><span class="delimiter">'</span></span>
+    }
+ }
+
+apply plugin: <span class="string"><span class="delimiter">'</span><span class="content">com.vogella.gradleplugin</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now the new task from the com.vogella.gradleplugin should be available:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="console">./gradlew tasks
+
+./gradlew myTask</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="optional-exercise-publishing-the-plug-in-to-the-gradle-plug-in-portal"><a class="link" href="#optional-exercise-publishing-the-plug-in-to-the-gradle-plug-in-portal">26. Optional Exercise - Publishing the plug-in to the Gradle plug-in portal</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To publish a Gradle plug-in in the Gradle Plug-in Portal the <em>com.gradle.plugin-publish</em> Gradle plug-in can be used.</p>
+</div>
+<div class="paragraph">
+<p>Before uploading Gradle plug-ins to the portal you must register at <a href="https://plugins.gradle.org/user/register" class="bare">https://plugins.gradle.org/user/register</a> and obtain the api keys from your profile.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/gradle-plug-in-api-key.png" alt="gradle plug in api key">
+</div>
+</div>
+<div class="paragraph">
+<p>The <em>gradle.publish.key</em> and <em>gradle.publish.secret</em> properties have to be added to the <em>gradle.properties</em>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <em>gradle.properties</em> file is usually located in the gradleHomeDir (usually <em>/${user.home}/.gradle</em>)</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Then the <em>build.gradle</em> file needs to be adjusted to be able to upload Gradle plug-ins.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">java-gradle-plugin</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">maven-publish</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">com.gradle.plugin-publish</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">0.9.10</span><span class="delimiter">'</span></span>
+}
+
+<span class="comment">// more code ...</span>
+
+pluginBundle {
+    website = <span class="string"><span class="delimiter">'</span><span class="content">${Web site for your plugin}</span><span class="delimiter">'</span></span>
+    vcsUrl = <span class="string"><span class="delimiter">'</span><span class="content">https://github.com/${your-repo}</span><span class="delimiter">'</span></span>
+
+    plugins {
+        vogellaPlugin {
+            id = <span class="string"><span class="delimiter">'</span><span class="content">com.vogella.gradleplugin</span><span class="delimiter">'</span></span>
+            displayName = <span class="string"><span class="delimiter">'</span><span class="content">Vogella Sample Plug-in</span><span class="delimiter">'</span></span>
+            description = <span class="string"><span class="delimiter">'</span><span class="content">Vogella Sample Plug-in for trying the </span><span class="delimiter">'</span></span>
+            tags = [<span class="string"><span class="delimiter">'</span><span class="content">Vogella</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">Training</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">Gradle</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">Sample</span><span class="delimiter">'</span></span>]
+            <span class="comment">// Gradle's plug-in portal does not support SNAPSHOTs</span>
+            version = <span class="string"><span class="delimiter">'</span><span class="content">0.0.1</span><span class="delimiter">'</span></span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following task can then be used to upload the Gradle plug-in.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="console">./gradlew publishPlugins</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the plug-in has been published the <em>plugins</em> closure can be used to make use of the Gradle plug-in.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+  id <span class="string"><span class="delimiter">&quot;</span><span class="content">com.vogella.gradleplugin</span><span class="delimiter">&quot;</span></span> version <span class="string"><span class="delimiter">&quot;</span><span class="content">0.0.1</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So the more verbose <code>buildscript</code> closure and the <code>apply plugin</code> method from previous chapters can be omitted.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>More details can be found here: <a href="https://guides.gradle.org/publishing-plugins-to-gradle-plugin-portal/" class="bare">https://guides.gradle.org/publishing-plugins-to-gradle-plugin-portal/</a></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="debugging-gradle-plug-ins"><a class="link" href="#debugging-gradle-plug-ins">27. Debugging Gradle Plug-ins</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="activate-remote-debugging"><a class="link" href="#activate-remote-debugging">27.1. Activate remote debugging</a></h3>
+<div class="paragraph">
+<p>The following properties have to be specified in the <em>gradle.properties</em> file to enable remote debugging:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">org.gradle.daemon=true
+org.gradle.jvmargs=-XX:+HeapDumpOnOutOfMemoryError -Xmx4g -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When running a Gradle build locally with these settings remote debugging can be accessed via localhost on port 5006.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <em>gradle.properties</em> file is usually located in the gradleHomeDir (usually <em>/${user.home}/.gradle</em>)</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="remote-debugging-in-the-eclipse-ide"><a class="link" href="#remote-debugging-in-the-eclipse-ide">27.2. Remote debugging in the Eclipse IDE</a></h3>
+<div class="paragraph">
+<p>You should import a certain Gradle plug-in into the Eclipse IDE by using the Buildship tooling.</p>
+</div>
+<div class="paragraph">
+<p>Then break points can be added to the Gradle plug-in&#8217;s source files.</p>
+</div>
+<div class="paragraph">
+<p>After that open the debug configuration and right click <em>Remote Java Application</em> to create a <em>New</em> <em>Debug Configuration</em> with the follwing settings:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/remote-debug-config.png" alt="remote debug config">
+</div>
+</div>
+<div class="paragraph">
+<p>Press the <kbd>Debug</kbd> button to run the remote debugger.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/remote-debug-view.png" alt="remote debug view">
+</div>
+</div>
+<div class="paragraph">
+<p>Then a Gradle build, which uses the desired Gradle plug-in, can be run by either using the Gradle Tasks View of the Buildship tooling inside the Eclipse IDE or invoke a Gradle build from command line.</p>
+</div>
+<div class="paragraph">
+<p>When a break point is hit during the Gradle task processing the Eclipse IDE will stop at that point.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./img/remote-debug-editor.png" alt="remote debug editor">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle_code_analysis"><a class="link" href="#gradle_code_analysis">28. Using code analysis tools</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Gradle provides several plugins for analyzing the code base of a Gradle project.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Gradle Code Analysis Tools</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Tool</th>
+<th class="tableblock halign-left valign-top">Plugin</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.gradle.org/current/userguide/checkstyle_plugin.html">Checkstyle</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">checkstyle</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates checkstyle rules, which are applied for a project</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.gradle.org/current/userguide/jacoco_plugin.html">Jacoco</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jacoco</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Checks for test coverage of the code being built</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.gradle.org/current/userguide/findbugs_plugin.html">FindBugs</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">findbugs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Static Code Analysis for Java</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.gradle.org/current/userguide/codenarc_plugin.html">CodeNarc</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">codenarc</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Static Code Analysis for Groovy</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.gradle.org/current/userguide/pmd_plugin.html">PMD</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">pmd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adds code quality checks for several programming languages to the build</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.gradle.org/current/userguide/jdepend_plugin.html">JDepend</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdepend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Another code analysis tool for analyzing dependencies in Java code</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="resources_gradle"><a class="link" href="#resources_gradle">29. Gradle</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="http://mrhaki.blogspot.de/search/label/Gradle%3AGoodness">Gradle Goodness blog series</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.vogella.com/tutorials/EclipseGradle/article.html">Eclipse Gradle tooling</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.gradle.org/current/userguide/publishing_maven.html">Publish to Maven repositories</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="copyright-license-and-source-code"><a class="link" href="#copyright-license-and-source-code">Appendix A: Copyright, License and Source code</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Copyright &#169; 2012-2019 vogella GmbH.
+Free use of the software examples is granted under the terms of the <a href="https://www.eclipse.org/legal/epl-2.0">Eclipse Public License 2.0</a>.
+This tutorial is published under the  <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/de/deed.en">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Germany</a> license.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.vogella.com/license.html">Licence</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.vogella.com/code/index.html">Source code</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.vogella.com/support.html">Support free tutorials</a></p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version <br>
+Last updated 2019-09-03 19:34:20 CEST
+</div>
+</div>
+</body>
+</html>

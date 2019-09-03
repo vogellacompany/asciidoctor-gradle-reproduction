@@ -1,0 +1,120 @@
+== Introduction to the Gradle build system
+
+=== What is the Gradle build system?
+
+image::gradle-logo.png[Gradle logo, pdfwidth=40%]
+
+(((Gradle)))
+_Gradle_ is an advanced general purpose build management system based on Groovy and Kotlin.
+Gradle supports the automatic download and configuration of dependencies or other libraries. 
+It supports Maven and Ivy repositories for retrieving these dependencies. 
+This allows reusing the artifacts of existing build systems.
+
+Gradle supports multi-project and multi-artifact builds.
+
+Gradle has the notion of _projects_ and _tasks_.
+
+
+[[gradle_projectstasks]]
+=== Projects and tasks in Gradle
+
+A Gradle build consists of one or more _projects_.
+Projects can be something which should be built or something that should be done. 
+Each project consists of _tasks_. 
+A task represents a piece of work which a build performs, e.g., compile the source code or generate the Javadoc.
+	
+[[gradle_runbuild_buildfile]]
+=== The Gradle build file - build.gradle
+
+A project using Gradle describes its build via a _build.gradle_ file. 
+This file is located in the root folder of the project.
+The build file for Gradle builds is based on a _Domain Specific Language_ (DSL). 
+In this file you can use a combination of declarative and imperative statements.
+You can also write Groovy or Kotlin code, whenever you need it. 
+Tasks can also be created and extended dynamically at runtime.
+
+
+This build file defines a project and its tasks. 
+Gradle is a general purpose build system hence this build file can perform any task. 
+The following listing represents a very simple build file.
+
+[source,gradle]
+----
+include::res/starter/build_hello.gradle[]
+----
+
+[NOTE]
+====
+In older Gradle files you might encounter the use of `<<` instead of `doLast`.
+
+[source, groovy]
+----
+include::res/starter/build_hello_deprecated.gradle[]
+----
+
+This option is removed in Gradle v5.0.
+====
+
+
+To execute the `hello` task in this build file, type `gradle hello` on the command line in the directory of the build file. 
+If the Gradle output should be suppressed, use the `-q` (quiet) parameter.
+
+[source,console]
+----
+include::res/starter/runbuild.gradle[]
+----
+
+[[gradle_runbuild_buildfile_comments]]
+
+=== Comments in Gradle build files
+You can use single and multiline comments in Gradle build files.
+
+[source,gradle]
+----
+include::res/comments/example.gradle[]
+----
+
+=== Project settings and description
+
+By default, Gradle uses the directory name as project name. 
+You can change this by creating a _settings.gradle_ file in the directory which specifies the project name.
+
+
+[source,console]
+----
+include::res/settings/settings.gradle[]
+----
+
+You can also add a description to your project via the _build.gradle_ file.
+
+[source,gradle]
+----
+include::res/settings/build.gradle[]
+----
+
+Use the `gradle project` command to get information about your project. 
+The following listing shows the output.
+
+[source,console]
+----
+include::res/settings/settings.output[]
+----
+
+
+== Gradle plug-ins
+
+(((Gradle, Plug-ins)))
+The Gradle build system uses plug-ins to extend its core functionality.
+A plug-in is an extension to Gradle which typically adds some preconfigured tasks.
+Gradle ships with a number of plug-ins, and you can develop custom plug-ins.
+	
+One example is the Java plug-in.
+This plug-in adds tasks to your project which allow compiling Java source code, run unit tests and to create a JAR file.
+	
+A plug-in is included in a _build.gradle_ file with the `apply plugin: 'pluginname'` statement.
+	
+For example the entry `apply plugin: 'com.android.application'` makes the Android plug-in available for a Gradle build.
+	
+Gradle provides also a registry for plug-ins via http://plugins.gradle.org[Gradle Plugin search].
+
+

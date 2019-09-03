@@ -1,0 +1,8 @@
+:linkcss:
+:experimental:
+:icons:
+:sectnums:
+:imagesdir: ./img
+:docinfodir: ../
+:textselfreference: tutorial
+:toc: preamble

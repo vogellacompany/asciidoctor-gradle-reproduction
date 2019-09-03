@@ -1,0 +1,39 @@
+== Developing custom Gradle plug-ins
+
+=== Why creating Gradle plug-ins
+
+As a general rule, it is useful to have a build that is as much declarative as possible as this simplifies future maintenance. 
+Therefore it is advised to avoid complex code in your Gradle build file. 
+If you need custom logic you should place it into a custom Gradle plug-in.
+
+=== Gradle DSL 
+
+Each Gradle plug-in comes with a DSL. 
+To see all properties of a Gradle object, you can use the following code snippet:
+
+[source,code]
+----
+println variants.properties
+            .sort{it.key}
+            .collect{it}
+            .findAll{!filtered.contains(it.key)}
+            .join('\n')
+----
+
+For example to define a tasks which show the properties of all `android.applicationVariants` (in an Android project), use:
+
+[source,code]
+----
+task showAndoidVariantsInformation {
+    doLast {
+        android.applicationVariants.all { variants ->
+        	println variants.properties
+            .sort{it.key}
+            .collect{it}
+            .findAll{!filtered.contains(it.key)}
+            .join('\n')
+        }
+    }
+}
+----
+

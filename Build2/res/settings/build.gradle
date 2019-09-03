@@ -1,0 +1,12 @@
+description ="""
+Example project for a Gradle build
+
+Project name: ${project.name}
+
+More detailed information here... """
+
+task hello {
+	doLast {
+		println 'Hello Gradle'
+	}
+}

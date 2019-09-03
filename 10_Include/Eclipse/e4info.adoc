@@ -1,0 +1,6 @@
+== Learn more about Eclipse RCP development
+
+I hope you enjoyed this tutorial. 
+You find an extended online training at the https://learn.vogella.com/courses/details/rich-client-platform[Eclipse RCP online training] website.
+		
+		

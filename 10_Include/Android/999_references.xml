@@ -1,0 +1,50 @@
+[[androidreferences]]
+== References
+
+[[androidstudio_createimage]]
+=== Create an image via Android studio
+		
+See https://www.vogella.com/tutorials/AndroidStudioTooling/article.html#androidstudio_createimage[Creating an image asset] to learn how to create an image asset with Android Studio.
+		
+
+[[androidstudio_creatingresourcefolder]]
+=== Creating a resource folder
+		
+See https://www.vogella.com/tutorials/AndroidStudioTooling/article.html#androidstudio_creatingresourcefolder[Creating a new resource folder] to learn how to a new resource file with Android Studio.
+		
+[[androidstudio_creatingresourcefile]]
+=== Creating a resource file
+		
+See https://www.vogella.com/tutorials/AndroidStudioTooling/article.html#androidstudio_creatingresourcefile[Creating a new resource file] to learn how to a new resource file with Android Studio.
+		
+[[androidstudio_androidstudio_createmenu]]
+=== Add a new menu XML resource
+		
+See https://www.vogella.com/tutorials/AndroidStudioTooling/article.html#androidstudio_createmenu[Add a new menu XML resource] to learn how to a new XML menu resource with Android Studio.
+		
+[[androidsupportlibrary_avoiding_remove]]
+=== Remove the usage of the support library
+		
+See
+https://www.vogella.com/tutorials/AndroidSupportLibrary/article.html#androidsupportlibrary_avoiding_remove[Android support library] how to remove the usage of the support library.
+		
+
+[[androidstudio_creatingresourcefile]]
+=== Creating a resource file
+		
+See https://www.vogella.com/tutorials/AndroidStudioTooling/article.html#androidstudio_creatingresourcefile[Creating a new resource file] to learn how to a new resource file with Android Studio.
+		
+
+[[androidstudio_androidstudio_createmenu]]
+=== Add a new menu XML resource
+		
+See https://www.vogella.com/tutorials/AndroidStudioTooling/article.html#androidstudio_createmenu[Add a new menu XML resource] to learn how to a new XML menu resource with Android Studio.
+		
+
+[[androidsupportlibrary_avoiding_remove]]
+=== Remove the usage of the support library
+		
+See https://www.vogella.com/tutorials/AndroidSupportLibrary/article.html#androidsupportlibrary_avoiding_remove[Android support library] how to remove the usage of the support library.
+		
+
+

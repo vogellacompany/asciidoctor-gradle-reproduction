@@ -1,0 +1,95 @@
+== Exercise - Creating a simple Gradle plugin
+
+The 'java-gradle-plugin' Gradle plug-in simplifies creating custom Gradle plug-ins.
+This plug-in is current incubating.
+
+It does the following:
+
+* the gradleApi() dependency is automatically added
+* the gradleTestKit() dependency is automatically added
+* the necessary plug-in descriptor files automatically
+
+=== Create a Gradle project
+
+Select menu:File[New|Other|Gradle|Gradle Project] in Eclipse to create a new Gradle project.
+The _com.vogella.gradleplugin_ as project name.
+
+image::gradle-plugin-new-wizard.png[] 
+
+Stick to the defaults of the wizard and create the project.
+
+=== Apply the 'java-gradle-plugin' plug-in
+
+Change the `build.gradle` file to the following:
+
+[source, groovy]
+----
+plugins {
+    id 'java-gradle-plugin'
+}
+
+gradlePlugin {
+    plugins {
+        vogellaPlugin {
+            id = 'com.vogella.gradleplugin'
+            implementationClass = 'com.vogella.gradleplugin.MyPlugin'
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+	// No need to add gradleApi() here, because it is applied by the 'java-gradle-plugin' plug-in
+
+	// We want to merge and parse SpotBugs xml files with XSLT
+	compile('net.sf.saxon:Saxon-HE:9.8.0-12')
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+}
+
+wrapper {
+	gradleVersion = '4.9'
+}
+----
+
+In the _/src/main/java_ folder create the following two classes.
+
+[source,java]
+----
+package com.vogella.gradleplugin;
+
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
+
+public class MyTask extends DefaultTask {
+
+    @TaskAction
+    public void myTask() {
+    	System.out.println("Hello from vogella task");
+    }
+}
+
+----
+
+[source,java]
+----
+package com.vogella.gradleplugin;
+
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+
+public class MyPlugin implements Plugin<Project> {
+
+    @Override
+    public void apply(Project project) {
+    	project.getTasks().create("myTask", MyTask.class);
+    }
+
+}
+----
+
+Run the _build_ task to build to plug-in and see next exercises on how to deploy and consume the plug-in.
+

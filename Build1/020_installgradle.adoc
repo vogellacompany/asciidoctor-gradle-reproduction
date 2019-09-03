@@ -1,0 +1,123 @@
+== Installing and configuring Gradle
+
+=== Requirements
+
+(((Gradle, Installation)))
+The usage of Gradle requires an JDK (Java Development Kit) installation.
+	
+=== Download and extract Gradle
+		
+The latest version of Gradle can be found on the http://gradle.org/gradle-download[Gradle Download page].
+Download the latest _Complete distribution_.
+		
+It is a gradle-${version}-all.zip, where ${version} is a placeholder for the current version.
+
+Extract the contents of the downloaded zip file a new folder.
+		
+=== Installing Gradle on Windows
+		
+Add the folder to which you extracted Gradle to your `PATH` environment variable.
+		
+By pressing Win + Pause the system settings can be opened.
+		
+image::system_settings.png[Windows System Settings]
+		
+First the _Advanced System Settings_ have to be selected and then the btn:[Environment Variables] button needs to be pressed.
+		
+image::user_and_system_variables.png[Windows User and System Variables]
+		
+In the _Environment Variables_ dialog the (1) GRADLE_HOME and JAVA_HOME user variables should be set.
+After that the (2) Path entry in the _system variables_ is selected, the btn:[modify] button can be pressed to add the _bin_ folder of the Gradle installation to the Path.
+		
+image::path_variables.png[Windows Path Variables]
+	
+=== Installing Gradle on Linux/Mac
+
+==== Manual installation
+		
+The `JAVA_HOME` variable must point to a proper jdk and `$JAVA_HOME/bin` must be part of the PATH environment variable.
+		
+Add Gradle to the path by running `export PATH=/usr/local/gradle/FOLDER_TO_WHICH_YOU_EXTRACTED_GRADLE/bin:$PATH` in a terminal.
+		
+==== Installation with SDKMAN!
+
+SDKMAN! is a command-line tool that allows you to install multiple Gradle versions and switch between them.
+It runs on any UNIX based operating system.
+
+===== Installing SDKMAN!
+
+You install it from the command-line. If you have already installed SDKMAN! you can skip this step.
+
+[source, commandline]
+----
+include::res/install/sdkman_install[]
+----
+
+After you've installed SDKMAN! you have to restart you terminal before using it.
+
+===== Installing Gradle and setting default version
+
+[source, commandline]
+----
+include::res/install/sdkman_install_gradle[]
+include::res/gradle/check_version[]
+----
+
+===== Switching Gradle version
+
+[source, commandline]
+----
+include::res/install/sdkman_switch_version[]
+include::res/gradle/check_version[]
+----
+
+==== Check if Gradle installation was successful
+		
+Open a command line and type `gradle`, which will run Gradle's help task by default.
+
+	
+[[gradeinstallation_demon]]
+=== Using the Gradle daemon for improved startup time
+		
+Gradle allows to start Gradle as daemon to avoid starting the Java virtual machine for every build. 
+To configure that create a file called _gradle.properties_ in the _${HOME}/.gradle_ and add the following line to it:
+
+----
+include::res/install/gradle.properties[]
+----
+		
+You can also place the _gradle.properties_ file to the root directory of your project and commit it to your version control system.
+		
+If Gradle is not used for a few hours, the daemon stops automatically.
+		
+Executing gradle with the `--daemon` parameter on the command line starts the gradle daemon.
+		
+To stop the daemon interactively use the `gradle --stop` command.
+
+=== Specify custom JVM settings for Gradle
+
+The GRADLE_OPTS environment variable offers the opportunity to set specific JVM options for Gradle.
+		
+In <<gradeinstallation_demon>> the performance for the JVM startup is improved, but another performance killer for large builds can be a too small maximum heap space. 
+Therefore it makes sense to increase it for Gradle.
+		
+`export GRADLE_OPTS=-Xmx1024m`
+defines that Gradle can use 1 GB as maximum heap size.
+		
+On Windows OS environment variables are usually defined via the system property UI.
+
+If you want to set JVM settings not globally but on a per project basis you can place them in `<Your app folder>/gradle.properties`:
+
+----
+org.gradle.jvmargs=-Xms2g -Xmx4g -XX\:MaxHeapSize\=3g
+----
+		
+=== Typical .gitignore file for Gradle projects
+		
+If you are using Git as version control system, you can use the following _.gitignore_ file as template for a Gradle project.
+		
+[source,java]
+----
+include::res/git/gitignore[]
+----
+

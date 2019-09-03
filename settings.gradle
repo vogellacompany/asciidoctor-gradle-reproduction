@@ -1,0 +1,16 @@
+pluginManagement {
+	repositories {
+		mavenLocal()
+		gradlePluginPortal()
+		jcenter()
+	}
+}
+
+rootProject.name = 'reproduction'
+
+include 'Build1'
+include 'Build2'
+include 'Build3'
+include 'Build4'
+include 'Build5'
+

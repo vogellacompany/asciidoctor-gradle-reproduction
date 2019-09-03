@@ -1,0 +1,58 @@
+[[gradle_testing]]
+== Testing with Gradle
+
+[[gradle_junit_namingconventions]]
+=== Test naming conventions for Gradle
+
+If you are using the Gradle build system, the Gradle "test" task scans all compiled classes in the source folder of the project, e.g., _/src/test/java_ or _/src/test/groovy_. 
+JUnit classes are identified by:
+
+* Class or a super class extends TestCase or GroovyTestCase
+* Class or a super class is annotated with @RunWith
+* Class or a super class contain a method annotated with @Test
+
+You can set the `scanForTestClasses`
+property to false, if you do not want automatic test class detection.
+In this case, if no additional include /
+exclude
+patterns are
+specified, the default for included classes are **/*Tests.class”,
+“**/*Test.class” and the
+default excluded
+classes are
+“**/Abstract*.class”.
+
+=== Include and Exclude particular Tests
+
+The test configuration in general is described at https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html[Gradle Test tasks description].
+
+The `Test` class has a `include` and `exclude` method. 
+These methods can be used to specify, which tests should actually be run.
+
+Only run included tests:
+
+[source,gradle]
+----
+include::res/test/include.gradle[]
+----
+
+Skip excluded tests:
+
+[source,gradle]
+----
+include::res/test/exclude.gradle[]
+----
+
+=== Show all test output in the terminal
+
+By default Gradle doesn't print the standard output of your tests to the terminal.
+To see all output of your tests add this to your build file:
+
+[source, groovy]
+----
+test {
+    testLogging.showStandardStreams = true
+}
+----
+
+

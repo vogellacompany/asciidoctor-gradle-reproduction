@@ -1,0 +1,12 @@
+plugins {
+  id "com.vogella.asciidoc" version "0.16.0"
+}
+
+allprojects {
+	apply plugin: 'com.vogella.asciidoc'
+}
+
+wrapper {
+	gradleVersion = '5.6.1'
+}
+

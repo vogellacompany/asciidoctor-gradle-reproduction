@@ -1,0 +1,16 @@
+// other plug-ins
+apply plugin: 'maven-publish'
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+		maven {
+			url "$buildDir/repo"
+		}
+	}
+}

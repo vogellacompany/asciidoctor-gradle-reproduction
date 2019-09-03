@@ -1,0 +1,132 @@
+== Dependency management for Java projects
+
+=== Managing dependencies with Gradle
+
+(((Gradle,Dependencies)))
+(((Gradle, Specifying dependencies)))
+(((Gradle,classpath)))
+Gradle allows managing the classpath of your projects. 
+It can add JAR files, directories or other projects to the build path of your application.
+It also supports the automatic download of your Java library dependencies. 
+Simply specify the dependency in your Gradle build file. 
+This triggers Gradle to download the library including its transient dependencies during the build.
+
+A Java library is identified by Gradle via its project’s `groupId:artifactId:version` (also known as GAV in Maven).
+This GAV uniquely identifies a library in a certain version.
+You can use the http://search.maven.org/[Search Maven Website] to search for the GAV of a library in Maven Central.
+
+To add a dependency add an entry to the dependency section in your build.gradle file as demonstrated by the following listing.
+
+[source,gradle]
+----
+include::res/dependencies/dep.txt[]
+----
+
+=== Specifying the repositories to search for dependencies
+
+In your build file you specify the remote repositories to look for dependencies. 
+Gradle supports Maven and Ivy repositories to search for dependencies. 
+The following listing shows how to configure Maven central as dependency source.
+
+[source,gradle]
+----
+include::res/dependencies/maven1.txt[]
+----
+
+It is also possible to configure the target as a URL.
+
+[source,gradle]
+----
+include::res/dependencies/maven2.txt[]
+----
+
+You can also specify other targets, for example Bintray as Maven repository.
+
+[source,gradle]
+----
+include::res/dependencies/jcenter.txt[]
+----
+
+The next listing demonstrates how to define an Ivy dependency. 
+
+[source,gradle]
+----
+include::res/dependencies/ivy.txt[]
+----
+
+You can also add different repositories at once.
+
+[source,gradle]
+----
+include::res/dependencies/multiple_jfrog_maven.txt[]
+----
+
+You can also reference artifacts from the file system.
+
+[source,gradle]
+----
+include::res/java/build_file_deps.gradle[]
+----
+
+=== Show dependencies of a project (also transient dependencies) .
+
+The following command shows all transient dependencies of a Gradle project.
+[source,gradle]
+----
+gradle dependencies
+----
+
+[NOTE]
+====
+https://mvnrepository.com allows also to search for an artifact and shows its direct dependencies.
+====
+
+=== Gradle cache and deleting the cache
+
+You can refresh dependencies in your cache with the command line option `--refresh-dependencies`. 
+You can also delete the cached files under _~/.gradle/caches_. 
+With the next build Gradle attempts to download the dependencies again.
+
+[[excluding_dependencies]]
+=== Excluding transitive dependencies
+
+Sometimes you have dependencies on packages that define conflicting transitive dependencies.
+One solution is to exclude a dependency from a specific module:
+
+[source, groovy]
+----
+compile 'org.springframework:spring-web:4.3.10.RELEASE' {
+    exclude group: 'com.google.code.gson', module: 'gson'
+}
+----
+
+If you have multiple dependency that define a dependency you want to exclude, you can do so at the project level:
+
+[source, groovy]
+----
+configurations.all {
+    exclude group: 'com.google.code.gson', module: 'gson'
+}
+----
+
+Following the same approach we can exclude a dependency only during runtime:
+
+[source, groovy]
+----
+configurations.runtime {
+    exclude group: 'com.google.code.gson', module: 'gson'
+}
+----
+
+=== Forcing a specific version of a transitive dependency
+
+It is possible to force gradle to pick a specific version when it encounters conflicting transitive dependencies.
+Keep in mind that you might have to manually update this version when you are upgrading the packages that depend on it.
+
+[source, groovy]
+----
+configurations.all {
+    resolutionStrategy.force 'com.google.code.gson:gson:2.8.1'
+}
+----
+
